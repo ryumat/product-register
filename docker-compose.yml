@@ -1,0 +1,30 @@
+version: '3'
+
+volumes:
+    db-data:
+
+services:
+  web: # サービス名(ex.app)
+    build: .
+    ports: 
+      - '3000:3000'
+      #- '4444:4444' 複数はリスト形式で書く
+    volumes:
+      - '.:/product-register' 
+      #相対パスで書く:→githubなどで共有するから
+    environment:
+      - 'DATABASE_PASSWORD=postgres'
+    tty: true  #-t tty 画面を切りにする
+    stdin_open: true #-i interactive
+    depends_on:
+      - db
+    links:
+      - db
+
+  db:
+    image: postgres
+    volumes:
+      - 'db-data:/var/lib/postgresql/data'
+    environment:
+      - 'POSTGRES_USER=postgres'
+      - 'POSTGRES_PASSWORD=postgres'
